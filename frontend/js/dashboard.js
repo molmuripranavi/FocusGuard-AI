@@ -1,11 +1,24 @@
+// ==========================
+// FOCUSGUARD AI DASHBOARD
+// ==========================
+
+// Timer Variables
 let timer;
 let timeLeft = 1500;
 
-let focusScore = 100;
-let distractions = 0;
-let sessionsCompleted = 0;
+// Analytics Variables
+let focusScore =
+Number(localStorage.getItem("focusScore")) || 100;
 
-// Elements
+let distractions = 0;
+
+let sessionsCompleted =
+Number(localStorage.getItem("sessions")) || 0;
+
+// ==========================
+// ELEMENTS
+// ==========================
+
 const timerDisplay =
 document.getElementById("timer");
 
@@ -14,6 +27,9 @@ document.getElementById("score");
 
 const distractionDisplay =
 document.getElementById("distractions");
+
+const sessionsDisplay =
+document.getElementById("sessions");
 
 const startBtn =
 document.getElementById("startBtn");
@@ -24,11 +40,17 @@ document.getElementById("resetBtn");
 const modeSelect =
 document.getElementById("mode");
 
-// --------------------
-// TIMER
-// --------------------
+const goalProgress =
+document.getElementById("goalProgress");
 
-function updateTimer(){
+const goalText =
+document.getElementById("goalText");
+
+// ==========================
+// TIMER
+// ==========================
+
+function updateTimer() {
 
     const minutes =
     Math.floor(timeLeft / 60);
@@ -37,42 +59,79 @@ function updateTimer(){
     timeLeft % 60;
 
     timerDisplay.textContent =
-    `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+    `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
 updateTimer();
 
-startBtn.addEventListener("click",()=>{
+startBtn.addEventListener("click", () => {
 
     clearInterval(timer);
 
-    timer = setInterval(()=>{
+    timer = setInterval(() => {
 
-        if(timeLeft > 0){
+        if (timeLeft > 0) {
 
             timeLeft--;
             updateTimer();
 
-        }else{
+        } else {
 
             clearInterval(timer);
 
             sessionsCompleted++;
+
+            focusScore =
+            Math.min(
+                100,
+                focusScore + 5
+            );
+
             localStorage.setItem(
                 "sessions",
                 sessionsCompleted
             );
+
             localStorage.setItem(
                 "focusScore",
                 focusScore
             );
+
+            let streak =
+            Number(
+                localStorage.getItem(
+                    "streak"
+                )
+            ) || 0;
+
+            streak++;
+
+            localStorage.setItem(
+                "streak",
+                streak
+            );
+
+            updateScore();
+            updateGoal();
+
+            notify(
+                "Session Completed!"
+            );
+
+            speak(
+                "Excellent work. Focus session completed."
+            );
+
+            alert(
+                "🎉 Focus Session Completed!"
+            );
         }
 
-    },1000);
+    }, 1000);
 
 });
 
-resetBtn.addEventListener("click",()=>{
+resetBtn.addEventListener("click", () => {
 
     clearInterval(timer);
 
@@ -83,7 +142,7 @@ resetBtn.addEventListener("click",()=>{
 
 });
 
-modeSelect.addEventListener("change",()=>{
+modeSelect.addEventListener("change", () => {
 
     timeLeft =
     Number(modeSelect.value);
@@ -92,99 +151,155 @@ modeSelect.addEventListener("change",()=>{
 
 });
 
-// --------------------
+// ==========================
 // SCORE
-// --------------------
+// ==========================
 
-function updateScore(){
+function updateScore() {
 
     scoreDisplay.textContent =
     focusScore + "%";
 
     distractionDisplay.textContent =
     distractions;
+
+    if (sessionsDisplay) {
+
+        sessionsDisplay.textContent =
+        sessionsCompleted;
+    }
+
 }
 
-// --------------------
-// NOTIFICATIONS
-// --------------------
+// ==========================
+// DAILY GOAL
+// ==========================
 
-if("Notification" in window){
+function updateGoal() {
+
+    let minutes =
+    sessionsCompleted * 25;
+
+    if (goalProgress) {
+
+        goalProgress.value =
+        minutes;
+
+        goalText.textContent =
+        `${minutes} / 180 Minutes`;
+
+    }
+
+}
+
+// ==========================
+// NOTIFICATIONS
+// ==========================
+
+if ("Notification" in window) {
 
     Notification.requestPermission();
 }
 
-function notify(message){
+function notify(message) {
 
-    if(Notification.permission === "granted"){
+    if (
+        Notification.permission ===
+        "granted"
+    ) {
 
         new Notification(
             "FocusGuard AI",
             {
-                body:message
+                body: message
             }
         );
     }
 }
 
-// --------------------
-// VOICE
-// --------------------
+// ==========================
+// VOICE ALERTS
+// ==========================
 
-function speak(text){
+function speak(text) {
 
-    let speech =
-    new SpeechSynthesisUtterance(text);
+    const speech =
+    new SpeechSynthesisUtterance(
+        text
+    );
 
     speech.lang = "en-US";
 
-    speechSynthesis.speak(speech);
+    speechSynthesis.speak(
+        speech
+    );
 }
 
-// --------------------
+// ==========================
 // DISTRACTION DETECTION
-// --------------------
+// ==========================
+
+function handleDistraction() {
+
+    distractions++;
+
+    focusScore =
+    Math.max(
+        0,
+        focusScore - 10
+    );
+
+    localStorage.setItem(
+        "focusScore",
+        focusScore
+    );
+
+    updateScore();
+
+    notify(
+        "Distraction detected!"
+    );
+
+    speak(
+        "Please return to your study session."
+    );
+}
+
+window.handleDistraction = handleDistraction;
+
+// ==========================
+// TAB SWITCH DETECTION
+// ==========================
 
 document.addEventListener(
-"visibilitychange",
-()=>{
+    "visibilitychange",
+    () => {
 
-    if(document.hidden){
+        if (
+            document.hidden
+        ) {
 
-        distractions++;
+            handleDistraction();
 
-        focusScore =
-        Math.max(
-            0,
-            focusScore - 10
-        );
+        }
 
-        updateScore();
-
-        notify(
-        "Distraction detected!"
-        );
-
-        speak(
-        "Please return to your study session."
-        );
     }
-});
+);
 
-// --------------------
+// ==========================
 // INACTIVITY DETECTION
-// --------------------
+// ==========================
 
 let inactivityTimer;
 
-function resetInactivity(){
+function resetInactivity() {
 
     clearTimeout(
-    inactivityTimer
+        inactivityTimer
     );
 
     inactivityTimer =
-    setTimeout(()=>{
+    setTimeout(() => {
 
         distractions++;
 
@@ -194,127 +309,170 @@ function resetInactivity(){
             focusScore - 5
         );
 
+        localStorage.setItem(
+            "focusScore",
+            focusScore
+        );
+
         updateScore();
 
         notify(
-        "You seem inactive."
+            "You seem inactive."
         );
 
         speak(
-        "You seem distracted."
+            "You seem distracted."
         );
 
-    },60000);
+    }, 60000);
 
 }
 
 document.addEventListener(
-"mousemove",
-resetInactivity
+    "mousemove",
+    resetInactivity
 );
 
 document.addEventListener(
-"keypress",
-resetInactivity
+    "keypress",
+    resetInactivity
+);
+
+document.addEventListener(
+    "click",
+    resetInactivity
 );
 
 resetInactivity();
 
-// --------------------
+// ==========================
 // TASK MANAGER
-// --------------------
+// ==========================
 
 const taskInput =
 document.getElementById(
-"taskInput"
+    "taskInput"
 );
 
 const addTask =
 document.getElementById(
-"addTask"
+    "addTask"
 );
 
 const taskList =
 document.getElementById(
-"taskList"
+    "taskList"
 );
 
 let tasks =
 JSON.parse(
-localStorage.getItem(
-"tasks"
-)
+    localStorage.getItem(
+        "tasks"
+    )
 ) || [];
 
-function renderTasks(){
+function renderTasks() {
 
     taskList.innerHTML = "";
 
     tasks.forEach(
-    (task,index)=>{
+        (
+            task,
+            index
+        ) => {
 
-        const li =
-        document.createElement(
-        "li"
-        );
+            const li =
+            document.createElement(
+                "li"
+            );
 
-        li.innerHTML = `
-        ${task}
-        <button onclick="deleteTask(${index})">
-        Delete
-        </button>
-        `;
+            li.innerHTML = `
+                ${task}
+                <button onclick="deleteTask(${index})">
+                    Delete
+                </button>
+            `;
 
-        taskList.appendChild(li);
-    });
+            taskList.appendChild(
+                li
+            );
+
+        }
+    );
 
     localStorage.setItem(
-    "tasks",
-    JSON.stringify(tasks)
+        "tasks",
+        JSON.stringify(
+            tasks
+        )
     );
+
 }
 
-function deleteTask(index){
+function deleteTask(index) {
 
-    tasks.splice(index,1);
+    tasks.splice(
+        index,
+        1
+    );
 
     renderTasks();
 }
+
+window.deleteTask =
+deleteTask;
 
 addTask.addEventListener(
-"click",
-()=>{
+    "click",
+    () => {
 
-    const task =
-    taskInput.value.trim();
+        const task =
+        taskInput.value.trim();
 
-    if(task === "")
-    return;
+        if (
+            task === ""
+        ) return;
 
-    tasks.push(task);
+        tasks.push(
+            task
+        );
 
-    taskInput.value = "";
+        taskInput.value = "";
 
-    renderTasks();
-});
+        renderTasks();
+
+    }
+);
 
 renderTasks();
 
-// --------------------
-// THEME TOGGLE
-// --------------------
+// ==========================
+// DARK MODE
+// ==========================
 
 const themeBtn =
 document.getElementById(
-"themeBtn"
+    "themeBtn"
 );
 
 themeBtn.addEventListener(
-"click",
-()=>{
+    "click",
+    () => {
 
-    document.body.classList.toggle(
-    "dark"
-    );
+        document.body.classList.toggle(
+            "dark"
+        );
 
-});
+    }
+);
+
+// ==========================
+// INITIALIZE
+// ==========================
+
+updateScore();
+updateGoal();
+
+console.log(
+    "FocusGuard AI Loaded Successfully"
+);

@@ -4,122 +4,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FocusGuard Dashboard</title>
+    <title>FocusGuard AI Dashboard</title>
 
     <link rel="stylesheet" href="css/dashboard.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
 
-<nav>
-    <h1>🎯 FocusGuard AI</h1>
+    <!-- Navbar -->
+    <nav>
+        <h1>🎯 FocusGuard AI</h1>
 
-    <div>
-        <a href="index.html">
-            <button>Home</button>
+        <div class="nav-buttons">
+
+            <a href="index.html">
+                <button>🏠 Home</button>
+            </a>
+
+            <button id="themeBtn">
+                🌙 Toggle Theme
+            </button>
+
+        </div>
+    </nav>
+
+    <!-- Dashboard Container -->
+    <div class="container">
+
+        <!-- Focus Timer -->
+        <div class="card">
+
+            <h2>⏱ Focus Timer</h2>
+
+            <select id="mode">
+                <option value="1500">Pomodoro (25 Min)</option>
+                <option value="2700">Coding Mode (45 Min)</option>
+                <option value="3600">Exam Mode (60 Min)</option>
+            </select>
+
+            <div id="timer">
+                25:00
+            </div>
+
+            <div class="button-group">
+                <button id="startBtn">▶ Start</button>
+                <button id="resetBtn">🔄 Reset</button>
+            </div>
+
+        </div>
+
+        <!-- Focus Score -->
+        <div class="card">
+
+            <h2>🎯 Focus Score</h2>
+
+            <div id="score">
+                100%
+            </div>
+
+            <hr>
+
+            <p>
+                ⚠ Distractions:
+                <span id="distractions">0</span>
+            </p>
+
+            <p>
+                ✅ Sessions:
+                <span id="sessions">0</span>
+            </p>
+
+        </div>
+
+        <!-- Daily Goal -->
+        <div class="card">
+
+            <h2>🚀 Daily Goal</h2>
+
+            <p>Goal: Study 3 Hours</p>
+
+            <progress
+                id="goalProgress"
+                value="0"
+                max="180">
+            </progress>
+
+            <p id="goalText">
+                0 / 180 Minutes
+            </p>
+
+        </div>
+
+        <!-- Task Manager -->
+        <div class="card">
+
+            <h2>📝 Task Manager</h2>
+
+            <input
+                type="text"
+                id="taskInput"
+                placeholder="Enter a task">
+
+            <button id="addTask">
+                ➕ Add Task
+            </button>
+
+            <ul id="taskList"></ul>
+
+        </div>
+
+        <!-- AI Focus Monitor -->
+        <div class="card">
+
+            <h2>🎥 AI Focus Monitor</h2>
+
+            <video
+                id="video"
+                autoplay
+                muted>
+            </video>
+
+            <p id="faceStatus">
+                Loading Camera...
+            </p>
+
+        </div>
+
+        <!-- Productivity Tips -->
+        <div class="card">
+
+            <h2>💡 Smart Productivity Tips</h2>
+
+            <ul>
+
+                <li>
+                    Take a short break every 45 minutes.
+                </li>
+
+                <li>
+                    Keep social media tabs closed while studying.
+                </li>
+
+                <li>
+                    Use Coding Mode for deep work sessions.
+                </li>
+
+                <li>
+                    Aim for a Focus Score above 90%.
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- Analytics Button -->
+    <div class="analytics-section">
+
+        <a href="analytics.html">
+            <button class="analytics-btn">
+                📊 View Analytics Dashboard
+            </button>
         </a>
 
-        <button id="themeBtn">
-            Toggle Theme
-        </button>
-    </div>
-</nav>
-
-<div class="container">
-
-    <!-- Focus Timer -->
-    <div class="card">
-
-        <h2>⏱ Focus Timer</h2>
-
-        <select id="mode">
-            <option value="1500">Pomodoro (25 min)</option>
-            <option value="2700">Coding Mode (45 min)</option>
-            <option value="3600">Exam Mode (60 min)</option>
-        </select>
-
-        <div id="timer">
-            25:00
-        </div>
-
-        <button id="startBtn">Start</button>
-        <button id="resetBtn">Reset</button>
-
     </div>
 
-    <!-- Focus Score -->
-    <div class="card">
-
-        <h2>🎯 Focus Score</h2>
-
-        <div id="score">
-            100%
-        </div>
+    <!-- Footer -->
+    <footer>
 
         <p>
-            Distractions:
-            <span id="distractions">0</span>
+            © 2026 FocusGuard AI | Productivity Assistant
         </p>
 
-        <p>
-            Sessions Completed:
-            <span id="sessions">0</span>
-        </p>
+    </footer>
 
-    </div>
+    <!-- Scripts -->
+    <script src="js/dashboard.js"></script>
 
-    <!-- Task Manager -->
-    <div class="card">
-
-        <h2>📝 Task Manager</h2>
-
-        <input
-            type="text"
-            id="taskInput"
-            placeholder="Enter task">
-
-        <button id="addTask">
-            Add Task
-        </button>
-
-        <ul id="taskList"></ul>
-
-    </div>
-
-    <!-- Daily Goal -->
-    <div class="card">
-
-        <h2>🚀 Daily Goal</h2>
-
-        <p>
-            Goal: Study 3 Hours
-        </p>
-
-        <progress
-            id="goalProgress"
-            value="0"
-            max="180">
-        </progress>
-
-        <p id="goalText">
-            0 / 180 minutes
-        </p>
-
-    </div>
-
-</div>
-
-<div style="text-align:center; margin-bottom:30px;">
-
-    <a href="analytics.html">
-        <button>
-            📊 View Analytics
-        </button>
-    </a>
-
-</div>
-
-<script src="js/dashboard.js"></script>
+    <script src="js/webcam.js"></script>
 
 </body>
+
 </html>
