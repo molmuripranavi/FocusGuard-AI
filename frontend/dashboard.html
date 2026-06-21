@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusGuard Dashboard</title>
+
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+<nav>
+    <h1>🎯 FocusGuard AI</h1>
+
+    <div>
+        <a href="index.html">
+            <button>Home</button>
+        </a>
+
+        <button id="themeBtn">
+            Toggle Theme
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Focus Timer -->
+    <div class="card">
+
+        <h2>⏱ Focus Timer</h2>
+
+        <select id="mode">
+            <option value="1500">Pomodoro (25 min)</option>
+            <option value="2700">Coding Mode (45 min)</option>
+            <option value="3600">Exam Mode (60 min)</option>
+        </select>
+
+        <div id="timer">
+            25:00
+        </div>
+
+        <button id="startBtn">Start</button>
+        <button id="resetBtn">Reset</button>
+
+    </div>
+
+    <!-- Focus Score -->
+    <div class="card">
+
+        <h2>🎯 Focus Score</h2>
+
+        <div id="score">
+            100%
+        </div>
+
+        <p>
+            Distractions:
+            <span id="distractions">0</span>
+        </p>
+
+        <p>
+            Sessions Completed:
+            <span id="sessions">0</span>
+        </p>
+
+    </div>
+
+    <!-- Task Manager -->
+    <div class="card">
+
+        <h2>📝 Task Manager</h2>
+
+        <input
+            type="text"
+            id="taskInput"
+            placeholder="Enter task">
+
+        <button id="addTask">
+            Add Task
+        </button>
+
+        <ul id="taskList"></ul>
+
+    </div>
+
+    <!-- Daily Goal -->
+    <div class="card">
+
+        <h2>🚀 Daily Goal</h2>
+
+        <p>
+            Goal: Study 3 Hours
+        </p>
+
+        <progress
+            id="goalProgress"
+            value="0"
+            max="180">
+        </progress>
+
+        <p id="goalText">
+            0 / 180 minutes
+        </p>
+
+    </div>
+
+</div>
+
+<div style="text-align:center; margin-bottom:30px;">
+
+    <a href="analytics.html">
+        <button>
+            📊 View Analytics
+        </button>
+    </a>
+
+</div>
+
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>
