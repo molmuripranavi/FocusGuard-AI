@@ -418,7 +418,7 @@ README.md
 
 Clone Repository
 
-git clone https://github.com/your-username/FocusGuard-AI.git
+git clone https://github.com/molmuripranavi/FocusGuard-AI
 
 ## Step 2
 
